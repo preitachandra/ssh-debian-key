@@ -1,0 +1,22 @@
+name: Enable Rapid Delivery Automation
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  automation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run application
+        run: bash automation_demo.sh
+
+      - name: Run testing
+        run: bash automation_test.sh
+
+      - name: Finish
+        run: echo "Automation completed!"

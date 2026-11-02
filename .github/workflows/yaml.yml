@@ -1,5 +1,3 @@
- yaml
-
  name: Script Workflow (Lint, Security, Test, Env)
 
 # Triggers only for pushes and pull requests targeting the 'main' branch

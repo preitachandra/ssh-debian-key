@@ -1,73 +1,73 @@
-yaml
+ yaml
 
-name: Script Workflow (Lint, Security, Test, Env)
+ name: Script Workflow (Lint, Security, Test, Env)
 
 # Triggers only for pushes and pull requests targeting the 'main' branch
-on:
-  push:
-    branches: [ main]
-  pull_request:
-    branches: [ main]
+ on:
+   push:
+     branches: [ main]
+   pull_request:
+     branches: [ main]
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
+ jobs:
+   build-and-test:
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+       security-events: write
 
 # Define the environment variable for the entire job
-    env:
-      REQUIRED_VAR: "workflow_value"
+     env:
+       REQUIRED_VAR: "workflow_value"
 
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
+     steps:
+       - name: Checkout repository code
+         uses: actions/checkout@v4
 
-      - name: Ensure script is executable
-        run: chmod +x scripts/my-script.sh
+       - name: Ensure script is executable
+         run: chmod +x scripts/my-script.sh
 
 # --- LINTING STAGE ---
-      - name: Install ShellCheck (Linter)
-        run: sudo apt-get update && sudo apt-get install -y shellcheck
+       - name: Install ShellCheck (Linter)
+         run: sudo apt-get update && sudo apt-get install -y shellcheck
 
-      - name: Run ShellCheck on the script
-        run: shellcheck scripts/my-script.sh
+       - name: Run ShellCheck on the script
+         run: shellcheck scripts/my-script.sh
 
 # --- SECURITY STAGE (using Flawfinder) ---
-      - name: Install Flawfinder (SAST Tool)
-        run: sudo apt-get install -y flawfinder
+       - name: Install Flawfinder (SAST Tool)
+         run: sudo apt-get install -y flawfinder
 
-      - name: Run Flawfinder security scan on script
+       - name: Run Flawfinder security scan on script
 # Flawfinder scans the file and reports potential security weaknesses
-        run: flawfinder scripts/my-script.sh
+         run: flawfinder scripts/my-script.sh
 
 # --- TESTING STAGE ---
-      - name: Show test message
-        run: echo "Running simple test assertion..."
+       - name: Show test message
+         run: echo "Running simple test assertion..."
 
-      - name: Execute Test Script
-        run: ./scripts/my-script.sh
+       - name: Execute Test Script
+         run: ./scripts/my-script.sh
 
-  package-and-deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: write
+   package-and-deploy:
+     needs: build-and-test
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+       actions: write
 
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
+     steps:
+       - name: Checkout repository code
+         uses: actions/checkout@v4
 
-      - name: Install zip utility
-        run: sudo apt-get update && sudo apt-get install -y zip
+       - name: Install zip utility
+         run: sudo apt-get update && sudo apt-get install -y zip
 
-      - name: Create a deployable ZIP archive
-        run: zip -r workflow_script_package.zip scripts/
+       - name: Create a deployable ZIP archive
+         run: zip -r workflow_script_package.zip scripts/
 
-      - name: Upload ZIP file as a workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-         name: script-artifact
-         path: workflow_script_package.zip
+       - name: Upload ZIP file as a workflow artifact
+         uses: actions/upload-artifact@v4
+         with:
+          name: script-artifact
+          path: workflow_script_package.zip
